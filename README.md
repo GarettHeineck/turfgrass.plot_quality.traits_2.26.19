@@ -2,8 +2,11 @@
 
 ## Project information
 ### 1. This project demonstrates how to use R to quantify several traits in turf type perennial ryegrass.  
-   1. Three example perennial ryegrass plots were imaged in the field under ambient light conditions.
-   1. These are saved as JPGs in the 'original images' folder.
+   1. Three perennial ryegrass plots were imaged in the field under ambient light conditions in August 2018.
+   1. Plots were seeded in 2017 in Minnesota at the UMN St.Paul research farm.
+   1. Second year perennial ryegrass often succombs to winterkill and subsequent crabgrass invasion in the second year.
+   1. Because perennial ryegrass is a prolific seed producer second year plots will often have decreased quality due to stemminess.
+   1. These images were taken with a simple DSLR camera and are saved as JPGs in the 'original images' folder.
 ### 2. A metadata sheet is included in the 'results' folder.  
    1. The data sheet contains important information to validate the computer output.
    1. Variables were collected manually on turfgrass quality, stemminess, and crabgrass infestation.
