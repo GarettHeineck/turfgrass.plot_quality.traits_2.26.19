@@ -19,8 +19,8 @@
 
 
 ## Setup
-1. Start by downloading the ZIP file with all documents.
-1. Save these documents in a folder called 'turfgrass.plot_quality.traits_2.26.19'
+1. Start by downloading the ZIP file with all documents by clicking the "clone or download" button.
+1. Save these documents in a folder anywhere on your hard drive called 'turfgrass.plot_quality.traits_2.26.19'.
 1. NOTE: if you do not use this file name it will take a little more work to run the R script.
 1. Open the R file in R studio.
 1. Go through each required package and download or update packages if needed.
