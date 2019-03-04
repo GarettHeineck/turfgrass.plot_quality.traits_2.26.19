@@ -131,7 +131,7 @@ names_original.img<- list.files(path=folder_original.img,full.names = FALSE)
 
 img.stats_turf.demo.2.26.19<- data.frame() #creating an empty data frame to record resutls***
 
-start<- Sys.time() #measuring run time***
+
 for (i in 1:length(paths_original.img)){
   img.01<- readJPEG(paths_original.img[i]) #starting chunk for green leaves in turfgrass plots***
   coor<- as.data.frame(as.table(img.01[,,1]))[1:2]
@@ -208,8 +208,7 @@ for (i in 1:length(paths_original.img)){
   )
   img.stats_turf.demo.2.26.19<-rbind(img.stats_turf.demo.2.26.19, write.stats)
 }
-end<- Sys.time()
-run.time<- end-start; run.time
+
 ##############
 ##############
 ##############
