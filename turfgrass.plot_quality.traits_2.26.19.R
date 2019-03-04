@@ -1,4 +1,4 @@
-## Demo script for quantifying some traits in perennial ryegrass turf
+## Demo script for quantifying some interesting traits in perennial ryegrass turf
 ## This script will demonstrate:
 #1) measuring the proportion of a plot with healthy turf (density) 
 #2) measuring the proportion of a plot consisting of stems (stemminess)
@@ -26,7 +26,7 @@ library(cowplot)
 ##############
 ##############
 ##############
-## Required file paths
+## Required file path
 #parent directory folder nomed "grass.leaf_rust.detection_2.26.19"***
 #To run this you need a folder named "grass.leaf_rust.detection_2.26.19"
 img_dir_turf.demo.2.26.19<- "/Users/heine237/Documents/GitHub/turfgrass.plot_quality.traits_2.26.19" #NOTE: change to your own file path***
@@ -78,8 +78,9 @@ for (i in 1:length(mixes_path)){
   temp3<- data.frame(mix, image, x=temp2[5]$Blue.X, y=temp2[6]$Blue.Y, red=temp2[18]$Red.Mean, green=temp2[11]$Green.Mean, blue=temp2[4]$Blue.Mean)
   training.palette_plant<- rbind(training.palette_plant, temp3) 
 }
-summary(training.palette_plant) # Summarizing the training palette***
-count(training.palette_plant, mix) # counting mixes training palette*** 
+summary(training.palette_plant) #summarizing the training palette***
+count(training.palette_plant, mix) #counting mixes training palette*** 
+#View(count(training.palette_plant, mix))
 #************************#
 ## Palette selection for healthy green grass
 palette_selection_green.leaf<- training.palette_plant
@@ -128,8 +129,9 @@ folder_EBImage.cluster<-  (paste(img_dir_turf.demo.2.26.19,"S7_crabgrass.cluster
 paths_original.img<- list.files(path=folder_original.img,full.names = TRUE)
 names_original.img<- list.files(path=folder_original.img,full.names = FALSE) 
 
-img.stats_turf.demo.2.26.19<- data.frame()
+img.stats_turf.demo.2.26.19<- data.frame() #creating an empty data frame to record resutls***
 
+start<- Sys.time() #measuring run time***
 for (i in 1:length(paths_original.img)){
   img.01<- readJPEG(paths_original.img[i]) #starting chunk for green leaves in turfgrass plots***
   coor<- as.data.frame(as.table(img.01[,,1]))[1:2]
@@ -139,7 +141,7 @@ for (i in 1:length(paths_original.img)){
   img.dat.01<- cbind(coor, red, green, blue)
   colnames(img.dat.01)<- c("y","x","red","green","blue")
   img.dat.01$classify<- predict(rfm_green.leaf_plant, img.dat.01)
-  img.dat.01$thresh<- ifelse(img.dat.01$classify>.80, 1,0) #set threshold***
+  img.dat.01$thresh<- ifelse(img.dat.01$classify>.80, 1,0) #set threshold to 80%***
   img.02<- matrix(img.dat.01$thresh, nrow=nrow(img.01), ncol=ncol(img.01))
   writeJPEG(img.02, paste(folder_classify.leaf, "/", names_original.img[i], sep = ""), quality = 1)
   paths_classify_leaf<- list.files(path=folder_classify.leaf,full.names = TRUE)
@@ -152,11 +154,11 @@ for (i in 1:length(paths_original.img)){
   writeImage(img.03, paste(folder_EBImage.leaf, "/", names_original.img[i] ,sep=""), quality = 100)
   leaf.featr.img.03<- bwlabel(image_dilate.01)
   leaf.featr<- data.frame(computeFeatures.shape(leaf.featr.img.03))
-
+  #************************#
   img.dat.02<- cbind(coor, red, green, blue) #starting chunk for perennial ryegrass stems in turfgrass plots***
   colnames(img.dat.02)<- c("y","x","red","green","blue")
   img.dat.02$classify<- predict(rfm_stem_plant, img.dat.02)
-  img.dat.02$thresh<- ifelse(img.dat.02$classify>.40, 1,0) #set threshold***
+  img.dat.02$thresh<- ifelse(img.dat.02$classify>.40, 1,0) #set threshold to 40%***
   img.04<- matrix(img.dat.02$thresh, nrow=nrow(img.01), ncol=ncol(img.01))
   writeJPEG(img.04, paste(folder_classify.stem, "/", names_original.img[i], sep = ""), quality = 1)
   paths_classify_stem<- list.files(path=folder_classify.stem,full.names = TRUE)
@@ -169,11 +171,11 @@ for (i in 1:length(paths_original.img)){
   writeImage(img.05, paste(folder_EBImage.stem, "/", names_original.img[i] ,sep=""), quality = 100)
   stem.featr.img.05<- bwlabel(image_dilate.02)
   stem.featr<- data.frame(computeFeatures.shape(stem.featr.img.05))
-
+  #************************#
   img.dat.03<- cbind(coor, red, green, blue) #starting chunk for crabgrass detection in turfgrass plots***
   colnames(img.dat.03)<- c("y","x","red","green","blue")
   img.dat.03$classify<- predict(rfm_crabgrass_plant, img.dat.03)
-  img.dat.03$thresh<- ifelse(img.dat.03$classify>.70, 1,0) #set threshold setting pixels above threshold to 1***
+  img.dat.03$thresh<- ifelse(img.dat.03$classify>.70, 1,0) #set threshold to 70%***
   img.06<- matrix(img.dat.03$thresh, nrow=nrow(img.01), ncol=ncol(img.01))
   writeJPEG(img.06, paste(folder_classify.crabgrass, "/", names_original.img[i], sep = ""), quality = 1)
   paths_classify_crabgrass<- list.files(path=folder_classify.crabgrass,full.names = TRUE)
@@ -187,11 +189,12 @@ for (i in 1:length(paths_original.img)){
   writeImage(img.07, paste(folder_EBImage.crabgrass, "/", names_original.img[i] ,sep=""), quality = 100)
   crabgrass.featr.img.07<- bwlabel(image_morph.05)
   crabgrass.featr<- data.frame(computeFeatures.shape(crabgrass.featr.img.07)) #dataframe saving crabgrass related blobs***
-  
-  image_wtr.shd<- watershed(image_morph.05, ext = 40)  #starting chunk for crabgrass CLUSTER detection in turfgrass plots***
-  crabgrass.cluster<- data.frame(computeFeatures.shape(image_wtr.shd))
-  crabgrass.cluster<- crabgrass.cluster %>% filter(s.area > quantile(s.area, 0.95))  %>% filter(s.area > 1000) #this is a VERY rough estimation of cluster number*** 
-  writeImage(colorLabels(image_wtr.shd), paste(folder_EBImage.cluster, "/", names_original.img[i] ,sep=""), quality = 100)
+  #************************#
+  #image_wtr.shd<- watershed(image_morph.05, ext = 30)  #starting chunk for crabgrass CLUSTER detection in turfgrass plots***
+  #crabgrass.cluster<- data.frame(computeFeatures.shape(image_wtr.shd))
+  #crabgrass.cluster<- crabgrass.cluster %>% filter(s.area > quantile(s.area, 0.95))  %>% filter(s.area > 1000) #this is a VERY rough estimation of cluster number*** 
+  #display(colorLabels(image_wtr.shd))
+  #writeImage(colorLabels(image_wtr.shd), paste(folder_EBImage.cluster, "/", names_original.img[i] ,sep=""), quality = 100)
   
   write.stats<- data.frame(sum.pixel= (dim(img.01)[1]*dim(img.01)[2]),
                            sum.leaf=  sum(leaf.featr$s.area),
@@ -199,12 +202,14 @@ for (i in 1:length(paths_original.img)){
                            sum.stem=  sum(stem.featr$s.area),
                            prop.stem= sum(stem.featr$s.area)/(dim(img.01)[1]*dim(img.01)[2]),
                            sum.crab=  sum(crabgrass.featr$s.area),
-                           prop.crab= sum(crabgrass.featr$s.area)/(dim(img.01)[1]*dim(img.01)[2]),
-                           crab.cluster.n= length(crabgrass.cluster$s.area), #counting the number of clusters of crabgrass***
-                           crab.cluster.avg= mean(crabgrass.cluster$s.area) #average pixel number of each clusters of crabgrass***
+                           prop.crab= sum(crabgrass.featr$s.area)/(dim(img.01)[1]*dim(img.01)[2])
+                           #,crab.cluster.n= length(crabgrass.cluster$s.area), #counting the number of clusters of crabgrass***
+                           #crab.cluster.avg= mean(crabgrass.cluster$s.area) #average pixel number of each clusters of crabgrass***
   )
   img.stats_turf.demo.2.26.19<-rbind(img.stats_turf.demo.2.26.19, write.stats)
 }
+end<- Sys.time()
+run.time<- end-start; run.time
 ##############
 ##############
 ##############
@@ -214,7 +219,7 @@ for (i in 1:length(paths_original.img)){
 ##############
 ##############
 ## Saving computer output
-## Binging metadata and computer output
+## Binding metadata and computer output
 write.csv(img.stats_turf.demo.2.26.19, paste(img_dir_turf.demo.2.26.19, "results","img.stats_plant.demo_2.25.19.csv", sep = "/")) #saving computer output***
 img.stats_turf.demo.2.26.19<- read.csv(paste(img_dir_turf.demo.2.26.19, "results", "img.stats_plant.demo_2.25.19.csv", sep = "/")) #reading in computer output from the results folder***
 turfplot.demo_field.data_2.26.19<- read_excel(paste(img_dir_turf.demo.2.26.19, "results", "turfplot.demo_field.data_2.26.19.xlsx", sep = "/"), skip = 6, na = ".") #reading in turf plot field data***
@@ -227,22 +232,22 @@ summary(turf.demo.2.26.19.output)
 #************************#
 ## Plotting data
 
-#plotting healthy leave***
+#plotting healthy turf***
 prcnt.leaf<- ggplot(turf.demo.2.26.19.output, aes(x=plot_num, y=prcnt.leaf))+
   labs(x = "turfgrass plot", y = "% healthy leaves", title = "Healthy Leaves")+
   geom_col(fill = c("#0b3d4c", "#00b2e2", "#9bdae9"), color = "black")+
   geom_text(aes(label = round(prcnt.leaf, 1), y = prcnt.leaf+5), size = 6)
-#plotting stem tissue
+#plotting stem tissue***
 prcnt.stem<- ggplot(turf.demo.2.26.19.output, aes(x=plot_num, y=prcnt.stem))+
   labs(x = "turfgrass plot", y = "% ryegrass stems", title = "Stemminess")+
   geom_col(fill = c("#0b3d4c", "#00b2e2", "#9bdae9"), color = "black")+
   geom_text(aes(label = round(prcnt.stem, 1), y = prcnt.stem+5), size = 6)
-#plotting crab grass infestation
+#plotting crabgrass infestation***
 prcnt.crab<- ggplot(turf.demo.2.26.19.output, aes(x=plot_num, y=prcnt.crab))+
   labs(x = "turfgrass plot", y = "% ryegrass stems", title = "Crabgrass")+
   geom_col(fill = c("#0b3d4c", "#00b2e2", "#9bdae9"), color = "black")+
   geom_text(aes(label = round(prcnt.crab, 1), y = prcnt.crab+.5), size = 6)
-#plotting visual turfgrass quality
+#plotting visual turfgrass quality***
 turf.quality<- ggplot(turf.demo.2.26.19.output, aes(x=plot_num, y=turf.quality))+
   labs(x = "turfgrass plot", y = "turf quality (VISUAL)", title = "Visual Quality Rating")+
   geom_col(fill = c("#0b3d4c", "#00b2e2", "#9bdae9"), color = "black")+
