@@ -32,3 +32,7 @@
    1. Operate image analysis using the models and EBImage functions.
    1. Output and save a summary data file.
    1. Conduct a few basic visualizations in ggplot.
+1. Currently the final processing step (lines 193-197) have been commented out
+   1. Some processor cannot handle the watershed transformation and so by default it is not included.
+   1. To incorporate that step remove the hash marks from lines 193-197 and 206-207.
+   1. Cluster analysis is interesting, but not necessary for this particular trait. 
