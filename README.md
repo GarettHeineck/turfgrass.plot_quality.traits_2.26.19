@@ -37,4 +37,4 @@
    1. Some processor cannot handle the watershed transformation and so by default it is not included (folder S7 will be empty).
    1. To incorporate that step remove the hash marks from lines 193-197 and 206-207.
    1. Cluster analysis is interesting, but not necessary for this particular trait. 
-1. This script will take about 10-15 minutes to run ( with a 2014 MacBook Pro 16G RAM MACIos High Sierra).
+1. This script will take about 10-15 minutes to run (13.3 min with a 2014 MacBook Pro 16G RAM macOS High Sierra).
